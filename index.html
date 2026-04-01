@@ -1,51 +1,89 @@
 <!DOCTYPE html>
-    <head>
-        <title>HyperNova Records</title>
-        <link rel="stylesheet" href="./index.css">
-    </head>
+<head>
+    <title>HyperNova Records</title>
+    <link rel="stylesheet" href="./index.css">
+</head>
 
-    <body>
+<body>
+    
+    <div id="vimeoContainer" style="padding:56.25% 0 0 0;position:relative;">
+        <iframe id="bgVideo" src="https://player.vimeo.com/video/1179356832?badge=0&amp;autopause=0&amp;autoplay=1&amp;loop=1&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Juice WRLD - Get Excited Lyric Video (UNRELEASED)"></iframe>
+    </div>
+    <script src="https://player.vimeo.com/api/player.js"><\/script>
+
+    <!-- ✅ removed inline onclick -->
+    <button class="Click button" id="clickButton">Click here</button>
+    <button id="unmuteBtn" style="position: fixed; top: 20px; right: 20px; z-index: 10; padding: 10px 20px; background: rgba(255,255,255,0.8); border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">🔊 Unmute</button>
+
+    <script>
+        // Wait for Vimeo API to load
+        function initPlayer() {
+            if (typeof Vimeo === 'undefined') {
+                setTimeout(initPlayer, 100);
+                return;
+            }
+            
+            // Initialize Vimeo player
+            const iframe = document.getElementById('bgVideo');
+            const player = new Vimeo.Player(iframe);
+            const unmuteBtn = document.getElementById('unmuteBtn');
+            
+            // Check initial mute state and update button
+            player.getMuted().then(muted => {
+                if (muted) {
+                    unmuteBtn.textContent = '🔊 Unmute';
+                } else {
+                    unmuteBtn.textContent = '🔇 Mute';
+                }
+            });
+            
+            // Unmute button click
+            unmuteBtn.onclick = function() {
+                player.getMuted().then(muted => {
+                    if (muted) {
+                        player.setMuted(false);
+                        unmuteBtn.textContent = '🔇 Mute';
+                    } else {
+                        player.setMuted(true);
+                        unmuteBtn.textContent = '🔊 Unmute';
+                    }
+                });
+            };
+            
+            // Auto play
+            player.ready().then(() => {
+                player.play().catch(err => console.log('Autoplay blocked:', err));
+            });
+            
+            // Restart when video ends to loop
+            player.on('ended', () => {
+                player.play();
+            });
+            
+            const clickButton = document.getElementById('clickButton');
+
+            // Button logic
+            if (localStorage.getItem('buttonClicked') === 'true') {
+                clickButton.style.display = 'none';
+            } else {
+                clickButton.style.display = 'none';
+
+                setTimeout(() => {
+                    clickButton.style.display = 'block';
+                }, 5000);
+
+                clickButton.onclick = function () {
+                    localStorage.setItem('buttonClicked', 'true');
+
+                    setTimeout(() => {
+                        window.location.href = './home.html';
+                    }, 500);
+                };
+            }
+        }
         
-        <video autoplay loop playsinline>
-            <source src="./media/videos/background/juicewrld-get-excited.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        initPlayer();
+    </script>
 
-        <button class="Click button" id="clickButton" onclick="window.location.href = '/hypernova-records/home.html';" >Click here</button>
-
-        <script>
-            document.getElementById('clickButton').style.display = 'none';
-            setTimeout(() => {
-                document.getElementById('clickButton').style.display = 'block';
-            }, 5000);
-        </script>
-    </body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</body>
 </html>
