@@ -1,57 +1,148 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
     <title>HyperNova Records</title>
-    <link rel="stylesheet" href="./index.css">
-</head>
-
-<body>
-    
-    <div id="vimeoContainer" style="padding:56.25% 0 0 0;position:relative;">
-        <iframe id="bgVideo" src="https://player.vimeo.com/video/1179356832?badge=0&amp;autopause=0&amp;autoplay=1&amp;loop=1&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Juice WRLD - Get Excited Lyric Video (UNRELEASED)"></iframe>
-    </div>
-    <script src="https://player.vimeo.com/api/player.js"><\/script>
-
-    <!-- ✅ removed inline onclick -->
-    <button class="Click button" id="clickButton">Click here</button>
-    <button id="unmuteBtn" style="position: fixed; top: 20px; right: 20px; z-index: 10; padding: 10px 20px; background: rgba(255,255,255,0.8); border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">🔊 Unmute</button>
-
-    <script>
-        // Wait for Vimeo API to load
-        function initPlayer() {
-            if (typeof Vimeo === 'undefined') {
-                setTimeout(initPlayer, 100);
-                return;
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body, html {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+        }
+        
+        #vimeo-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        #bgVideo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translateX(-50%) translateY(-50%);
+            min-width: 100%;
+            min-height: 100%;
+        }
+        
+        .click-button {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .click-button:hover {
+            background: #000;
+            color: #fff;
+            border-color: #fff;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            z-index: 10;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            letter-spacing: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .click-button {
+                padding: 12px 24px;
+                font-size: 16px;
             }
             
-            // Initialize Vimeo player
+            .logo {
+                font-size: 22px;
+                left: 50%;
+                transform: translateX(-50%);
+                text-align: center;
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .click-button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .logo {
+                font-size: 20px;
+                top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">HYPERNOVA RECORDS</div>
+    
+    <div id="vimeo-container">
+        <iframe id="bgVideo" src="https://player.vimeo.com/video/1179356832?badge=0&amp;autopause=0&amp;autoplay=1&amp;loop=1&amp;muted=0&amp;player_id=0&amp;app_id=58479" 
+                frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+
+    <button class="click-button" id="clickButton">Click here</button>
+
+    <script src="https://player.vimeo.com/api/player.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const vimeoContainer = document.getElementById('vimeo-container');
             const iframe = document.getElementById('bgVideo');
+            const clickButton = document.getElementById('clickButton');
+            
+            // Function to adjust video size for full screen
+            function adjustVideoSize() {
+                const container = document.getElementById('vimeo-container');
+                const iframe = document.getElementById('bgVideo');
+                
+                // Set container to full screen dimensions
+                container.style.width = window.innerWidth + 'px';
+                container.style.height = window.innerHeight + 'px';
+            }
+            
+            // Adjust video size on load and resize
+            window.addEventListener('resize', adjustVideoSize);
+            adjustVideoSize();
+            
+            // Initialize Vimeo player
             const player = new Vimeo.Player(iframe);
-            const unmuteBtn = document.getElementById('unmuteBtn');
             
-            // Check initial mute state and update button
-            player.getMuted().then(muted => {
-                if (muted) {
-                    unmuteBtn.textContent = '🔊 Unmute';
-                } else {
-                    unmuteBtn.textContent = '🔇 Mute';
-                }
-            });
-            
-            // Unmute button click
-            unmuteBtn.onclick = function() {
-                player.getMuted().then(muted => {
-                    if (muted) {
-                        player.setMuted(false);
-                        unmuteBtn.textContent = '🔇 Mute';
-                    } else {
-                        player.setMuted(true);
-                        unmuteBtn.textContent = '🔊 Unmute';
-                    }
-                });
-            };
-            
-            // Auto play
+            // Ensure audio plays
             player.ready().then(() => {
+                player.setMuted(false);
+                player.setVolume(1);
                 player.play().catch(err => console.log('Autoplay blocked:', err));
             });
             
@@ -60,30 +151,16 @@
                 player.play();
             });
             
-            const clickButton = document.getElementById('clickButton');
-
-            // Button logic
-            if (localStorage.getItem('buttonClicked') === 'true') {
-                clickButton.style.display = 'none';
-            } else {
-                clickButton.style.display = 'none';
-
-                setTimeout(() => {
-                    clickButton.style.display = 'block';
-                }, 5000);
-
-                clickButton.onclick = function () {
-                    localStorage.setItem('buttonClicked', 'true');
-
-                    setTimeout(() => {
-                        window.location.href = './home.html';
-                    }, 500);
-                };
-            }
-        }
-        
-        initPlayer();
+            // Show button after 5 seconds
+            setTimeout(() => {
+                clickButton.style.display = 'block';
+            }, 5000);
+            
+            // Navigate on click
+            clickButton.addEventListener('click', function() {
+                window.location.href = './home.html';
+            });
+        });
     </script>
-
 </body>
 </html>
